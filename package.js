@@ -1,6 +1,6 @@
 Package.describe({
   name: 'peerlibrary:subscription-data',
-  summary: "Extended Meteor.userId() and Meteor.user()",
+  summary: "Reactive and shared subscription data context",
   version: '0.1.0',
   git: 'https://github.com/peerlibrary/meteor-subscription-data.git'
 });
