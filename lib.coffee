@@ -65,11 +65,15 @@ share.subscriptionDataMethods = (collection) ->
         update.$set = {}
         update.$set[key] = value
 
+    # We checked that the "key" is an object.
     else
-      # We checked that the "key" is an object.
+      # We have to add "_connectionId", otherwise it will be removed.
       update = _.extend key,
         _connectionId: connectionId
 
+    # We make sure (on the server side) that "_connectionId" matches current
+    # connection to prevent malicious requests who guess the "subscriptionId"
+    # to modify the state of other subscriptions.
     collection.update
       _id: subscriptionId
       _connectionId: connectionId
