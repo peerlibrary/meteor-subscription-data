@@ -19,7 +19,7 @@ Connection::subscribe = (args...) ->
 
   handle = originalSubscribe.apply @, args
 
-  _.extend handle, share.handleMethods @_subscriptionData, handle.subscriptionId
+  _.extend handle, share.handleMethods @, @_subscriptionData, handle.subscriptionId
 
 # Recreate the convenience method.
 Meteor.subscribe = _.bind Meteor.connection.subscribe, Meteor.connection

@@ -15,7 +15,7 @@ Meteor.publish = (name, publishFunction) ->
       _id: publish._subscriptionId
       _connectionId: publish.connection.id
 
-    _.extend publish, share.handleMethods SubscriptionData, publish._subscriptionId
+    _.extend publish, share.handleMethods Meteor, SubscriptionData, publish._subscriptionId
 
     publishFunction.apply publish, args
 

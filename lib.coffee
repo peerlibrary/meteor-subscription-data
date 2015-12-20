@@ -1,4 +1,4 @@
-checkArgs: (args) ->
+checkArgs = (args) ->
   if args.length >= 2
     [key, value] = args
 
@@ -19,7 +19,7 @@ checkArgs: (args) ->
 
   true
 
-share.handleMethods = (collection, subscriptionId) ->
+share.handleMethods = (connection, collection, subscriptionId) ->
   data: (key) ->
     if key
       fields = {}
@@ -27,19 +27,30 @@ share.handleMethods = (collection, subscriptionId) ->
 
       collection.findOne(subscriptionId, fields: fields)?[key]
     else
-      collection.findOne subscriptionId
+      data = collection.findOne subscriptionId,
         fields:
-          _id: 0
           _connectionId: 0
 
+      return data unless data
+
+      # We have to query with "_id" included for reactivity
+      # to work, but we do not want to expose it.
+      _.omit data, '_id'
+
   setData: (args...) ->
-    @apply '_subscriptionDataSet', [subscriptionId].concat(args), (error) =>
+    connection.apply '_subscriptionDataSet', [subscriptionId].concat(args), (error) =>
       console.error "_subscriptionDataSet error", error if error
 
 share.subscriptionDataMethods = (collection) ->
   _subscriptionDataSet: (subscriptionId, args...) ->
     check subscriptionId, Match.DocumentId
     check args, Match.Where checkArgs
+
+    # @connection is available only on the server side, but this is OK,
+    # because on the client side "_connectionId" field does not exist
+    # anyway (it is not published), so {_connectionId: null} in fact does
+    # exactly the right thing, finds documents without "_connectionId".
+    connectionId = @connection?.id or null
 
     if args.length >= 2
       [key, value] = args
@@ -54,13 +65,13 @@ share.subscriptionDataMethods = (collection) ->
 
       collection.update
         _id: subscriptionId
-        _connectionId: @connection.id
+        _connectionId: connectionId
       ,
         update
 
     else if _.isObject args[0]
       collection.update
         _id: subscriptionId
-        _connectionId: @connection.id
+        _connectionId: connectionId
       ,
         args[0]
