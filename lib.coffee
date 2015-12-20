@@ -50,11 +50,18 @@ share.subscriptionDataMethods = (collection) ->
     check key, Match.Where checkKey
     check value, Match.Any
 
-    # @connection is available only on the server side, but this is OK,
-    # because on the client side "_connectionId" field does not exist
-    # anyway (it is not published), so {_connectionId: null} in fact does
-    # exactly the right thing, finds documents without "_connectionId".
-    connectionId = @connection?.id or null
+    if Meteor.isClient
+      # @connection is available only on the server side, but this is OK,
+      # because on the client side "_connectionId" field does not exist
+      # anyway (it is not published), so {_connectionId: null} in fact does
+      # exactly the right thing: finds documents without "_connectionId".
+      connectionId = null
+    else
+      # On the server side @connection does not exist when method is called
+      # from the server side (for example, from the publish function) so we
+      # have to get "connectionId" ourselves. We can do that because server
+      # side is trusted.
+      connectionId = @connection?.id or collection.findOne(subscriptionId)?._connectionId
 
     if _.isString key
       update = {}
