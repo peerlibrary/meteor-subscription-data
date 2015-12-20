@@ -12,7 +12,7 @@ checkArgs = (args) ->
     check update, Object
 
     for field, value of update
-      throw new Match.Error "Cannot modify '_connectionId'." if field is '_connectionId'
+      throw new Match.Error "Cannot modify '#{field}'." if field in ['_id', '_connectionId']
 
       # We do not allow MongoDB operators.
       throw new Match.Error "Invalid field name '#{field}'." if field[0] is '$'
@@ -74,4 +74,5 @@ share.subscriptionDataMethods = (collection) ->
         _id: subscriptionId
         _connectionId: connectionId
       ,
-        args[0]
+        _.extend args[0],
+          _connectionId: connectionId

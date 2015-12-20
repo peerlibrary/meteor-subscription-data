@@ -8,16 +8,20 @@ Meteor.publish = (name, publishFunction) ->
     # If it is an unnamed publish endpoint, we do not do anything special.
     return publishFunction.apply publish, args unless publish._subscriptionId
 
-    publish.onStop ->
-      SubscriptionData.remove publish._subscriptionId
-
     SubscriptionData.insert
       _id: publish._subscriptionId
       _connectionId: publish.connection.id
 
     _.extend publish, share.handleMethods Meteor, SubscriptionData, publish._subscriptionId
 
-    publishFunction.apply publish, args
+    result = publishFunction.apply publish, args
+
+    # We want this to be cleaned-up at the very end, after any other
+    # onStop callbacks registered inside the publishFunction.
+    publish.onStop ->
+      SubscriptionData.remove publish._subscriptionId
+
+    result
 
 Meteor.publish null, ->
   handle = SubscriptionData.find(
