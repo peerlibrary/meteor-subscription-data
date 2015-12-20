@@ -1,13 +1,11 @@
-checkArgs = (args) ->
-  if args.length >= 2
-    [key, value] = args
-
+checkKey = (key) ->
+  if _.isString key
     check key, Match.NonEmptyString
 
     throw new Match.Error "Cannot modify '_connectionId'." if key is '_connectionId'
 
   else
-    update = args[0]
+    update = key
 
     check update, Object
 
@@ -37,14 +35,20 @@ share.handleMethods = (connection, collection, subscriptionId) ->
       # to work, but we do not want to expose it.
       _.omit data, '_id'
 
-  setData: (args...) ->
-    connection.apply '_subscriptionDataSet', [subscriptionId].concat(args), (error) =>
+  setData: (key, value) ->
+    if value is undefined
+      args = [subscriptionId, key]
+    else
+      args = [subscriptionId, key, value]
+
+    connection.apply '_subscriptionDataSet', args, (error) =>
       console.error "_subscriptionDataSet error", error if error
 
 share.subscriptionDataMethods = (collection) ->
-  _subscriptionDataSet: (subscriptionId, args...) ->
+  _subscriptionDataSet: (subscriptionId, key, value) ->
     check subscriptionId, Match.DocumentId
-    check args, Match.Where checkArgs
+    check key, Match.Where checkKey
+    check value, Match.Any
 
     # @connection is available only on the server side, but this is OK,
     # because on the client side "_connectionId" field does not exist
@@ -52,9 +56,7 @@ share.subscriptionDataMethods = (collection) ->
     # exactly the right thing, finds documents without "_connectionId".
     connectionId = @connection?.id or null
 
-    if args.length >= 2
-      [key, value] = args
-
+    if _.isString key
       update = {}
       if value is undefined
         update.$unset = {}
@@ -63,16 +65,13 @@ share.subscriptionDataMethods = (collection) ->
         update.$set = {}
         update.$set[key] = value
 
-      collection.update
-        _id: subscriptionId
+    else
+      # We checked that the "key" is an object.
+      update = _.extend key,
         _connectionId: connectionId
-      ,
-        update
 
-    else if _.isObject args[0]
-      collection.update
-        _id: subscriptionId
-        _connectionId: connectionId
-      ,
-        _.extend args[0],
-          _connectionId: connectionId
+    collection.update
+      _id: subscriptionId
+      _connectionId: connectionId
+    ,
+      update

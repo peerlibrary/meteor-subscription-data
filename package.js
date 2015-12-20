@@ -39,7 +39,8 @@ Package.onTest(function (api) {
     'coffeescript',
     'accounts-password',
     'random',
-    'mongo'
+    'mongo',
+    'underscore'
   ]);
 
   // Internal dependencies.
@@ -49,6 +50,7 @@ Package.onTest(function (api) {
 
   // 3rd party dependencies.
   api.use([
+    'peerlibrary:reactive-publish@0.1.1',
     'peerlibrary:classy-test@0.2.15'
   ]);
 
