@@ -50,8 +50,8 @@ Package.onTest(function (api) {
 
   // 3rd party dependencies.
   api.use([
-    'peerlibrary:reactive-publish@0.1.1',
-    'peerlibrary:classy-test@0.2.15'
+    'peerlibrary:reactive-publish@0.1.3',
+    'peerlibrary:classy-test@0.2.24'
   ]);
 
   api.addFiles([
