@@ -37,7 +37,6 @@ Package.onTest(function (api) {
   // Core dependencies.
   api.use([
     'coffeescript',
-    'accounts-password',
     'random',
     'mongo',
     'underscore'
