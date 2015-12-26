@@ -1,7 +1,7 @@
 Package.describe({
   name: 'peerlibrary:subscription-data',
   summary: "Reactive and shared subscription data context",
-  version: '0.1.0',
+  version: '0.2.0',
   git: 'https://github.com/peerlibrary/meteor-subscription-data.git'
 });
 
