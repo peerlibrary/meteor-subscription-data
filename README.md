@@ -36,8 +36,8 @@ contains two new methods:
 Same methods are available also inside the [publish endpoint](http://docs.meteor.com/#/full/meteor_publish) function
 through `this`.
 
-Example
--------
+Examples
+--------
 
 If on the server side you have such publish endpoint:
 
