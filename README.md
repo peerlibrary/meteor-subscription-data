@@ -28,9 +28,10 @@ API
 The subscription handle returned from [`Meteor.subscribe`](http://docs.meteor.com/#/full/meteor_subscribe)
 contains two new methods:
 
-* `data(key)` – returns current data context object; if `key` is specified, returns `key`'s value
-* `setData(key, value)` - sets the `key` in the data context object to `value`; if `value` is `undefined`, key is unset;
-  alternatively, you can pass the whole new data context object which will be used as the new data context
+* `data(path)` – returns current data context object; if `path` is specified, returns value under `path` in the data
+  context; it uses [data-lookup](https://github.com/peerlibrary/meteor-data-lookup) package to resolve the path
+* `setData(path, value)` - sets the value under `path` in the data context object to `value`; if `value` is `undefined`,
+  path is unset; alternatively, you can pass the whole new data context object which will be used as the new data context
 
 Same methods are available also inside the [publish endpoint](http://docs.meteor.com/#/full/meteor_publish) function
 through `this`.

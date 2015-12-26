@@ -1,11 +1,11 @@
-checkKey = (key) ->
-  if _.isString key
-    check key, Match.NonEmptyString
+checkPath = (path) ->
+  if _.isString path
+    check path, Match.NonEmptyString
 
-    throw new Match.Error "Cannot modify '_connectionId'." if key is '_connectionId'
+    throw new Match.Error "Cannot modify '#{path}'." if path in ['_id', '_connectionId']
 
   else
-    update = key
+    update = path
 
     check update, Object
 
@@ -18,12 +18,16 @@ checkKey = (key) ->
   true
 
 share.handleMethods = (connection, collection, subscriptionId) ->
-  data: (key) ->
-    if key
+  data: (path, equalsFunc) ->
+    if path?
       fields = {}
-      fields[key] = 1
+      # A small optimization for the common case.
+      fields[path] = 1 if _.isString path
 
-      collection.findOne(subscriptionId, fields: fields)?[key]
+      DataLookup.get ->
+        collection.findOne subscriptionId, fields: fields
+      ,
+        path, equalsFunc
     else
       data = collection.findOne subscriptionId,
         fields:
@@ -35,19 +39,19 @@ share.handleMethods = (connection, collection, subscriptionId) ->
       # to work, but we do not want to expose it.
       _.omit data, '_id'
 
-  setData: (key, value) ->
+  setData: (path, value) ->
     if value is undefined
-      args = [subscriptionId, key]
+      args = [subscriptionId, path]
     else
-      args = [subscriptionId, key, value]
+      args = [subscriptionId, path, value]
 
     connection.apply '_subscriptionDataSet', args, (error) =>
       console.error "_subscriptionDataSet error", error if error
 
 share.subscriptionDataMethods = (collection) ->
-  _subscriptionDataSet: (subscriptionId, key, value) ->
+  _subscriptionDataSet: (subscriptionId, path, value) ->
     check subscriptionId, Match.DocumentId
-    check key, Match.Where checkKey
+    check path, Match.Where checkPath
     check value, Match.Any
 
     if Meteor.isClient
@@ -63,19 +67,19 @@ share.subscriptionDataMethods = (collection) ->
       # side is trusted.
       connectionId = @connection?.id or collection.findOne(subscriptionId)?._connectionId
 
-    if _.isString key
+    if _.isString path
       update = {}
       if value is undefined
         update.$unset = {}
-        update.$unset[key] = ''
+        update.$unset[path] = ''
       else
         update.$set = {}
-        update.$set[key] = value
+        update.$set[path] = value
 
-    # We checked that the "key" is an object.
+    # We checked that the "path" is an object.
     else
       # We have to add "_connectionId", otherwise it will be removed.
-      update = _.extend key,
+      update = _.extend path,
         _connectionId: connectionId
 
     # We make sure (on the server side) that "_connectionId" matches current

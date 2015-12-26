@@ -17,7 +17,8 @@ Package.onUse(function (api) {
 
   // 3rd party dependencies.
   api.use([
-    'peerlibrary:check-extension@0.2.0'
+    'peerlibrary:check-extension@0.2.0',
+    'peerlibrary:data-lookup@0.1.0'
   ]);
 
   api.addFiles([
