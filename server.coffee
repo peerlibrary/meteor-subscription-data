@@ -1,5 +1,7 @@
 SubscriptionData = new Mongo.Collection null
 
+CONNECTION_ID_REGEX = /^.+?_/
+
 originalPublish = Meteor.publish
 Meteor.publish = (name, publishFunction) ->
   originalPublish name, (args...) ->
@@ -8,18 +10,24 @@ Meteor.publish = (name, publishFunction) ->
     # If it is an unnamed publish endpoint, we do not do anything special.
     return publishFunction.apply publish, args unless publish._subscriptionId
 
-    SubscriptionData.insert
-      _id: publish._subscriptionId
-      _connectionId: publish.connection.id
+    assert _.isString(publish._subscriptionId), publish._subscriptionId
 
-    _.extend publish, share.handleMethods Meteor, SubscriptionData, publish._subscriptionId
+    # On the server we store _id prefixed with connection ID.
+    id = "#{publish.connection.id}_#{publish._subscriptionId}"
+
+    SubscriptionData.insert
+      _id: id
+      _connectionId: @connection.id
+
+    _.extend publish, share.handleMethods Meteor, SubscriptionData, id
 
     result = publishFunction.apply publish, args
 
     # We want this to be cleaned-up at the very end, after any other
     # onStop callbacks registered inside the publishFunction.
     publish.onStop ->
-      SubscriptionData.remove publish._subscriptionId
+      SubscriptionData.remove
+        _id: id
 
     result
 
@@ -31,10 +39,13 @@ Meteor.publish null, ->
       _connectionId: 0
   ).observeChanges
     added: (id, fields) =>
+      id = id.replace CONNECTION_ID_REGEX, ''
       @added '_subscriptionData', id, fields
     changed: (id, fields) =>
+      id = id.replace CONNECTION_ID_REGEX, ''
       @changed '_subscriptionData', id, fields
-    removed: (id, fields) =>
+    removed: (id) =>
+      id = id.replace CONNECTION_ID_REGEX, ''
       @removed '_subscriptionData', id
 
   @onStop =>
