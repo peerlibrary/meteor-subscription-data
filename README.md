@@ -50,7 +50,11 @@ Meteor.publish('infinite-scroll', function () {
   });
 
   self.autorun(function (computation) {
-    return MyCollection.find({}, {limit: self.data('limit') || 10});
+    var limit = self.data('limit') || 10;
+    // Do not forget to check the data.
+    check(limit, Number);
+
+    return MyCollection.find({}, {limit: limit, sort: {timestamp: -1}});
   });
 });
 ```
