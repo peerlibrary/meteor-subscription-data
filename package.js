@@ -12,7 +12,9 @@ Package.onUse(function (api) {
   api.use([
     'coffeescript',
     'mongo',
-    'underscore'
+    'underscore',
+    'tracker',
+    'ejson'
   ]);
 
   // 3rd party dependencies.

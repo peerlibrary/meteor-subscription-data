@@ -32,7 +32,7 @@ checkSubscriptionDataId = (subscriptionDataId) ->
 SUBSCRIPTION_ID_REGEX = /_.+?$/
 
 share.handleMethods = (connection, collection, subscriptionDataId) ->
-  data: (path, equalsFunc) ->
+  dataFunction = (path, equalsFunc) ->
     getData = (fields) ->
       data = collection.findOne subscriptionDataId,
         fields: fields
@@ -62,14 +62,21 @@ share.handleMethods = (connection, collection, subscriptionDataId) ->
       getData
         _connectionId: 0
 
-  setData: (path, value) ->
+  setDataFunction = (path, value) ->
     if value is undefined
       args = [subscriptionDataId, path]
     else
       args = [subscriptionDataId, path, value]
 
+    oldValue = Tracker.nonreactive =>
+      dataFunction path
+
+    return if EJSON.equals value, oldValue
+
     connection.apply '_subscriptionDataSet', args, (error) =>
       console.error "_subscriptionDataSet error", error if error
+
+  {data: dataFunction, setData: setDataFunction}
 
 share.subscriptionDataMethods = (collection) ->
   _subscriptionDataSet: (subscriptionDataId, path, value) ->
