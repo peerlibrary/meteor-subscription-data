@@ -2,13 +2,12 @@ SubscriptionData = new Mongo.Collection null
 
 CONNECTION_ID_REGEX = /^.+?_/
 
-originalPublish = Meteor.publish
-Meteor.publish = (name, publishFunction) ->
-  originalPublish name, (args...) ->
+extendPublish (name, func, options) ->
+  newFunc = (args...) ->
     publish = @
 
     # If it is an unnamed publish endpoint, we do not do anything special.
-    return publishFunction.apply publish, args unless publish._subscriptionId
+    return func.apply publish, args unless publish._subscriptionId
 
     assert _.isString(publish._subscriptionId), publish._subscriptionId
 
@@ -21,15 +20,17 @@ Meteor.publish = (name, publishFunction) ->
 
     _.extend publish, share.handleMethods Meteor, SubscriptionData, id
 
-    result = publishFunction.apply publish, args
+    result = func.apply publish, args
 
     # We want this to be cleaned-up at the very end, after any other
-    # onStop callbacks registered inside the publishFunction.
+    # onStop callbacks registered inside the func.
     publish.onStop ->
       SubscriptionData.remove
         _id: id
 
     result
+
+  [name, newFunc, options]
 
 Meteor.publish null, ->
   handle = SubscriptionData.find(

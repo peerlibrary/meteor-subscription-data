@@ -21,7 +21,8 @@ Package.onUse(function (api) {
   api.use([
     'peerlibrary:assert@0.2.5',
     'peerlibrary:check-extension@0.2.1',
-    'peerlibrary:data-lookup@0.1.0'
+    'peerlibrary:data-lookup@0.1.0',
+    'peerlibrary:extend-publish@0.3.0'
   ]);
 
   api.addFiles([
