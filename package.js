@@ -22,7 +22,7 @@ Package.onUse(function (api) {
     'peerlibrary:assert@0.2.5',
     'peerlibrary:check-extension@0.2.1',
     'peerlibrary:data-lookup@0.1.0',
-    'peerlibrary:extend-publish@0.3.0'
+    'peerlibrary:extend-publish@0.4.0'
   ]);
 
   api.addFiles([
@@ -56,7 +56,7 @@ Package.onTest(function (api) {
 
   // 3rd party dependencies.
   api.use([
-    'peerlibrary:reactive-publish@0.3.0',
+    'peerlibrary:reactive-publish@0.5.0',
     'peerlibrary:classy-test@0.2.26'
   ]);
 
