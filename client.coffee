@@ -1,3 +1,5 @@
+import {handleMethods, subscriptionDataMethods} from './lib'
+
 Connection = Meteor.connection.constructor
 
 Connection::_initializeSubscriptionData = ->
@@ -5,7 +7,7 @@ Connection::_initializeSubscriptionData = ->
 
   @_subscriptionData = new Mongo.Collection '_subscriptionData', connection: @
 
-  @methods share.subscriptionDataMethods @_subscriptionData
+  @methods subscriptionDataMethods @_subscriptionData
 
 originalLivedataConnected = Connection::_livedata_connected
 Connection::_livedata_connected = (args...) ->
@@ -19,7 +21,7 @@ Connection::subscribe = (args...) ->
 
   handle = originalSubscribe.apply @, args
 
-  _.extend handle, share.handleMethods @, @_subscriptionData, handle.subscriptionId
+  _.extend handle, handleMethods @, @_subscriptionData, handle.subscriptionId
 
 # Recreate the convenience method.
 Meteor.subscribe = _.bind Meteor.connection.subscribe, Meteor.connection

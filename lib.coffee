@@ -67,7 +67,7 @@ subscriptionDataSet = (collection, connectionId, subscriptionDataId, path, value
   ,
     update
 
-share.handleMethods = (connection, collection, subscriptionDataId) ->
+export handleMethods = (connection, collection, subscriptionDataId) ->
   dataFunction = (path, equalsFunc) ->
     getData = (fields) ->
       data = collection.findOne subscriptionDataId,
@@ -118,7 +118,7 @@ share.handleMethods = (connection, collection, subscriptionDataId) ->
 
   {data: dataFunction, setData: setDataFunction}
 
-share.subscriptionDataMethods = (collection) ->
+export subscriptionDataMethods = (collection) ->
   _subscriptionDataSet: (subscriptionDataId, path, value) ->
     check subscriptionDataId, Match.DocumentId
     check path, Match.Where checkPath

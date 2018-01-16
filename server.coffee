@@ -1,3 +1,5 @@
+import {handleMethods, subscriptionDataMethods} from './lib'
+
 SubscriptionData = new Mongo.Collection null
 
 CONNECTION_ID_REGEX = /^.+?_/
@@ -18,7 +20,7 @@ extendPublish (name, func, options) ->
       _id: id
       _connectionId: @connection.id
 
-    _.extend publish, share.handleMethods Meteor, SubscriptionData, id
+    _.extend publish, handleMethods Meteor, SubscriptionData, id
 
     result = func.apply publish, args
 
@@ -54,4 +56,4 @@ Meteor.publish null, ->
 
   @ready()
 
-Meteor.methods share.subscriptionDataMethods SubscriptionData
+Meteor.methods subscriptionDataMethods SubscriptionData
