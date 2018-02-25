@@ -67,6 +67,8 @@ subscriptionDataSet = (collection, connectionId, subscriptionDataId, path, value
   ,
     update
 
+  return
+
 export handleMethods = (connection, collection, subscriptionDataId) ->
   dataFunction = (path, equalsFunc) ->
     getData = (fields) ->
@@ -115,6 +117,8 @@ export handleMethods = (connection, collection, subscriptionDataId) ->
     else
       connectionId = subscriptionDataId.replace SUBSCRIPTION_ID_REGEX, ''
       subscriptionDataSet collection, connectionId, subscriptionDataId, path, value
+
+    return
 
   {data: dataFunction, setData: setDataFunction}
 
