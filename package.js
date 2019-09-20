@@ -1,16 +1,16 @@
 Package.describe({
   name: 'peerlibrary:subscription-data',
   summary: "Reactive and shared subscription data context",
-  version: '0.7.1',
+  version: '0.8.0',
   git: 'https://github.com/peerlibrary/meteor-subscription-data.git'
 });
 
 Package.onUse(function (api) {
-  api.versionsFrom('METEOR@1.4.4.5');
+  api.versionsFrom('METEOR@1.8.1');
 
   // Core dependencies.
   api.use([
-    'coffeescript@2.0.3_3',
+    'coffeescript@2.4.1',
     'ecmascript',
     'mongo',
     'underscore',
@@ -20,10 +20,10 @@ Package.onUse(function (api) {
 
   // 3rd party dependencies.
   api.use([
-    'peerlibrary:assert@0.2.5',
-    'peerlibrary:check-extension@0.4.0',
-    'peerlibrary:data-lookup@0.2.1',
-    'peerlibrary:extend-publish@0.5.0'
+    'peerlibrary:assert@0.3.0',
+    'peerlibrary:check-extension@0.7.0',
+    'peerlibrary:data-lookup@0.3.0',
+    'peerlibrary:extend-publish@0.6.0'
   ]);
 
   api.addFiles([
@@ -36,11 +36,11 @@ Package.onUse(function (api) {
 });
 
 Package.onTest(function (api) {
-  api.versionsFrom('METEOR@1.4.4.5');
+  api.versionsFrom('METEOR@1.8.1');
 
   // Core dependencies.
   api.use([
-    'coffeescript@2.0.3_3',
+    'coffeescript@2.4.1',
     'ecmascript',
     'random',
     'mongo',
@@ -54,8 +54,8 @@ Package.onTest(function (api) {
 
   // 3rd party dependencies.
   api.use([
-    'peerlibrary:reactive-publish@0.6.0',
-    'peerlibrary:classy-test@0.3.0'
+    'peerlibrary:reactive-publish@0.9.0',
+    'peerlibrary:classy-test@0.4.0'
   ]);
 
   api.addFiles([

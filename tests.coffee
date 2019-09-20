@@ -75,7 +75,7 @@ class BasicTestCase extends ClassyTestCase
       @subscription1.setData {foo: 'test', bar: 123}
 
       # To wait a bit for change to propagate.
-      Meteor.setTimeout @expect(), 10 # ms
+      Meteor.setTimeout @expect(), 200 # ms
   ,
     ->
       @assertEqual TestCollection.find({}, {fields: _id: 0}).fetch(), [{foo: 'test', bar: 123}]
@@ -84,7 +84,7 @@ class BasicTestCase extends ClassyTestCase
       @subscription1.setData 'foo', 'test2'
 
       # To wait a bit for change to propagate.
-      Meteor.setTimeout @expect(), 10 # ms
+      Meteor.setTimeout @expect(), 200 # ms
   ,
     ->
       @assertEqual TestCollection.find({}, {fields: _id: 0}).fetch(), [{foo: 'test2', bar: 123}]
@@ -93,7 +93,7 @@ class BasicTestCase extends ClassyTestCase
       @subscription1.setData 'foo', undefined
 
       # To wait a bit for change to propagate.
-      Meteor.setTimeout @expect(), 10 # ms
+      Meteor.setTimeout @expect(), 200 # ms
   ,
     ->
       @assertEqual TestCollection.find({}, {fields: _id: 0}).fetch(), [{bar: 123}]
@@ -102,7 +102,7 @@ class BasicTestCase extends ClassyTestCase
       @subscription1.setData 'foo', 'test3'
 
       # To wait a bit for change to propagate.
-      Meteor.setTimeout @expect(), 10 # ms
+      Meteor.setTimeout @expect(), 200 # ms
   ,
     ->
       @assertEqual TestCollection.find({}, {fields: _id: 0}).fetch(), [{foo: 'test3', bar: 123}]
@@ -111,7 +111,7 @@ class BasicTestCase extends ClassyTestCase
       @subscription1.setData {}
 
       # To wait a bit for change to propagate.
-      Meteor.setTimeout @expect(), 10 # ms
+      Meteor.setTimeout @expect(), 200 # ms
   ,
     ->
       @assertEqual TestCollection.find({}, {fields: _id: 0}).fetch(), [{}]
@@ -133,7 +133,7 @@ class BasicTestCase extends ClassyTestCase
   ,
     ->
       # To wait a bit for change to propagate.
-      Meteor.setTimeout @expect(), 100 # ms
+      Meteor.setTimeout @expect(), 200 # ms
   ,
     ->
       @assertEqual TestDataCollection.find({}).count(), 10
@@ -142,7 +142,7 @@ class BasicTestCase extends ClassyTestCase
       @subscription2.setData 'limit', 5
 
       # To wait a bit for change to propagate.
-      Meteor.setTimeout @expect(), 100 # ms
+      Meteor.setTimeout @expect(), 200 # ms
   ,
     ->
       @assertEqual TestDataCollection.find({}).count(), 5
@@ -155,7 +155,7 @@ class BasicTestCase extends ClassyTestCase
   ,
     ->
       # To wait a bit for change to propagate.
-      Meteor.setTimeout @expect(), 100 # ms
+      Meteor.setTimeout @expect(), 200 # ms
   ,
     ->
       @assertEqual TestDataCollection.find({}).count(), 5
